@@ -16,7 +16,12 @@ public class VoiceManager : MonoBehaviour
     [SerializeField] private UnityEvent wakeWordDetected;
     [SerializeField] private UnityEvent<string> completeTranscription;
 
-    private bool _voiceCommandReady;
+    [Header("Linked Scripts")]
+    public Incantation Incantation;
+
+    public string outText = "";
+
+private bool _voiceCommandReady;
 
     private void Awake()
     {
@@ -38,7 +43,7 @@ public class VoiceManager : MonoBehaviour
         appVoiceExperience.VoiceEvents.OnRequestCompleted.RemoveListener(ReactivateVoice);
         appVoiceExperience.VoiceEvents.OnPartialTranscription.RemoveListener(OnPartialTranscription);
         appVoiceExperience.VoiceEvents.OnFullTranscription.RemoveListener(OnFullTranscription);
-
+            
         var eventField = typeof(WitResponseMatcher).GetField("onMultiValueEvent", BindingFlags.NonPublic | BindingFlags.Instance);
         if (eventField != null && eventField.GetValue(responseMatcher) is MultiValueEvent onMultiValueEvent)
         {
@@ -57,8 +62,11 @@ public class VoiceManager : MonoBehaviour
 
    private void OnPartialTranscription(string transcription)
     {
-        if (!_voiceCommandReady) return; 
+        if (!_voiceCommandReady) return;
+        Debug.Log(transcription);
         transcriptionText.text = transcription;
+        outText = transcription;
+        //Incantation.incantingWords = transcriptionText.text;
     }
 
     private void OnFullTranscription(string transcription)
